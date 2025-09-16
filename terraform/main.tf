@@ -1,0 +1,72 @@
+terraform {
+  required_version = ">= 1.0"
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "6.13.0"
+    }
+
+    random = {
+      source  = "hashicorp/random"
+      version = "3.7.2"
+    }
+  }
+
+  # TODO: Uncomment after first apply to enable remote state
+  #   backend "s3" {
+  #     bucket = ""
+  #     key = "infrastructure/terraform.tfstate"
+  #     region = "us-east-1"
+  #     encrypt = true
+  #     dynamodb_table = ""
+  #   }
+}
+
+provider "aws" {
+  region = "var.aws_region"
+
+  default_tags {
+    tags = {
+      Project     = var.project_name
+      Environment = var.environment
+      ManagedBy   = "terrraform"
+    }
+  }
+}
+
+module "security" {
+  source       = "./modules/security"
+  project_name = var.project_name
+  vpc_id       = module.networking.vpc_id
+}
+
+module "networking" {
+  source               = "./modules/networking"
+  project_name         = var.project_name
+  public_subnet_cidrs  = var.public_subnet_cidrs
+  private_subnet_cidrs = var.private_subnet_cidrs
+
+}
+
+module "compute" {
+  source                    = "./modules/compute"
+  project_name              = var.project_name
+  vpc_id                    = module.networking.vpc_id
+  private_subnet_ids        = module.networking.private_subnet_ids
+  public_subnet_ids         = module.networking.public_subnet_ids
+  cluster_role_arn          = module.security.eks_cluster_role_arn
+  node_role_arn             = module.security.eks_cluster_role_arn
+  cluster_security_group_id = module.security.eks_cluster_security_group_id
+  kms_key_arn               = module.security.kms_key_arn
+}
+
+module "database" {
+  source                  = "./modules/database"
+  project_name            = var.project_name
+  vpc_id                  = module.networking.vpc_id
+  private_subnet_ids      = module.networking.private_subnet_ids
+  rds_security_group_id   = module.security.rds_security_group_id
+  redis_security_group_id = module.security.redis_security_group_id
+  kms_key_arn             = module.security.kms_key_arn
+}
