@@ -252,3 +252,40 @@ resource "aws_dynamodb_table" "terraform_locks" {
     Name = "${var.project_name}-tfstate-locks"
   }
 }
+
+# Additional SSM parameters for application secrets
+resource "aws_ssm_parameter" "api_key" {
+  name        = "/${var.project_name}/secrets/api-key"
+  description = "Application API key"
+  type        = "SecureString"
+  value       = random_password.api_key.result
+  key_id      = var.kms_key_arn
+
+  tags = {
+    Name = "${var.project_name}-api-key"
+  }
+}
+
+resource "aws_ssm_parameter" "jwt_secret" {
+  name        = "/${var.project_name}/secrets/jwt-secret"
+  description = "JWT signing secret"
+  type        = "SecureString"
+  value       = random_password.jwt_secret.result
+  key_id      = var.kms_key_arn
+
+  tags = {
+    Name = "${var.project_name}-jwt-secret"
+  }
+}
+
+# Generate random API key
+resource "random_password" "api_key" {
+  length  = 32
+  special = true
+}
+
+# Generate JWT secret
+resource "random_password" "jwt_secret" {
+  length  = 64
+  special = true
+}
