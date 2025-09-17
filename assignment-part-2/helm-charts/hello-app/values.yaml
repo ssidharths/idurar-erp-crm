@@ -2,7 +2,7 @@
 replicaCount: 2
 
 image:
-  repository: 795796019212.dkr.ecr.ap-south-1.amazonaws.com/devops-assigment-app
+  repository: 795796019212.dkr.ecr.us-east-1.amazonaws.com/devops-assigment-app
   pullPolicy: Always
   tag: "latest"
 
