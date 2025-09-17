@@ -165,7 +165,7 @@ jobs:
 
           let report;
           try{
-          report = fs.readFileSync('security-report,md', 'utf-8');
+          report = fs.readFileSync('security-report.md', 'utf-8');
           }catch(error){
           report = '❌ Security report could not be generated! Please check the logs...'
           }
