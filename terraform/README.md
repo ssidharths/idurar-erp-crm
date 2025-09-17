@@ -4,4 +4,4 @@
 
 *Complete AWS infrastructure showing VPC with multi-AZ deployment, EKS cluster, RDS PostgreSQL with Multi-AZ failover, ElastiCache Redis, and comprehensive security setup.*
 
-*Draw.io file can be found at the root level - iac-architecture.drawio.*
+*Draw.io file can be found at the root level - https://github.com/ssidharths/idurar-erp-crm/blob/feature/iac/iac-acrhitecture.drawio*
