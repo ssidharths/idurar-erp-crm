@@ -32,3 +32,18 @@ output "assets_bucket_name" {
   description = "Assets S3 bucket name"
   value       = module.database.assets_bucket_name
 }
+
+output "dashboard_url" {
+  description = "CloudWatch Dashboard URL"
+  value       = module.monitoring.dashboard_url
+}
+
+output "monitoring_alarm_names" {
+  description = "List of monitoring alarm names"
+  value       = module.monitoring.alarm_names
+}
+
+output "sns_topic_arn" {
+  description = "SNS topic ARN for alerts"
+  value       = module.security.sns_topic_arn
+}

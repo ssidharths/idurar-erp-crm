@@ -70,3 +70,21 @@ module "database" {
   redis_security_group_id = module.security.redis_security_group_id
   kms_key_arn             = module.security.kms_key_arn
 }
+
+module "monitoring" {
+  source = "./modules/monitoring"
+
+  project_name      = var.project_name
+  environment       = var.environment
+  eks_cluster_name  = module.compute.cluster_name
+  rds_instance_id   = module.database.rds_instance_id
+  redis_cluster_id  = module.database.redis_cluster_id
+  sns_topic_arn     = module.security.sns_topic_arn
+  log_retention_days = 30
+
+  depends_on = [
+    module.compute,
+    module.database,
+    module.security
+  ]
+}

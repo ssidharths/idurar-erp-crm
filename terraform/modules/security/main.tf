@@ -129,3 +129,55 @@ resource "aws_security_group" "redis" {
     Name = "${var.project_name}-redis-sg"
   }
 }
+
+# SNS Topic for alerts
+resource "aws_sns_topic" "alerts" {
+  name = "${var.project_name}-alerts"
+  
+  tags = {
+    Name = "${var.project_name}-alerts"
+  }
+}
+
+# SNS Topic Policy
+resource "aws_sns_topic_policy" "alerts" {
+  arn = aws_sns_topic.alerts.arn
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Service = "cloudwatch.amazonaws.com"
+        }
+        Action = "sns:Publish"
+        Resource = aws_sns_topic.alerts.arn
+        Condition = {
+          StringEquals = {
+            "aws:SourceAccount" = data.aws_caller_identity.current.account_id
+          }
+        }
+      }
+    ]
+  })
+}
+
+# Get current AWS account ID
+data "aws_caller_identity" "current" {}
+
+# Email subscription for alerts (you'll need to confirm this manually)
+resource "aws_sns_topic_subscription" "email_alerts" {
+  count     = length(var.alert_email_addresses)
+  topic_arn = aws_sns_topic.alerts.arn
+  protocol  = "email"
+  endpoint  = var.alert_email_addresses[count.index]
+}
+
+# Slack webhook subscription (optional)
+resource "aws_sns_topic_subscription" "slack_alerts" {
+  count     = var.slack_webhook_url != "" ? 1 : 0
+  topic_arn = aws_sns_topic.alerts.arn
+  protocol  = "https"
+  endpoint  = var.slack_webhook_url
+}

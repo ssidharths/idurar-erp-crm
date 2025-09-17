@@ -32,3 +32,8 @@ output "redis_security_group_id" {
   description = "Redis security group ID"
   value       = aws_security_group.redis.id
 }
+
+output "sns_topic_arn" {
+  description = "SNS topic ARN for alerts"
+  value       = aws_sns_topic.alerts.arn
+}
