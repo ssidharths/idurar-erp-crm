@@ -2,15 +2,48 @@ const express = require('express');
 const AWS = require('aws-sdk');
 const winston = require('winston');
 
-// Configure logger for structured JSON output
+// Enhanced logging configuration
 const logger = winston.createLogger({
-  level: 'info',
+  level: process.env.LOG_LEVEL || 'info',
   format: winston.format.combine(
-    winston.format.timestamp(),
+    winston.format.timestamp({
+      format: 'YYYY-MM-DD HH:mm:ss'
+    }),
     winston.format.errors({ stack: true }),
-    winston.format.json()
+    winston.format.json(),
+    winston.format.printf(({ timestamp, level, message, ...meta }) => {
+      return JSON.stringify({
+        timestamp,
+        level,
+        message,
+        service: 'hello-app',
+        environment: process.env.ENVIRONMENT || 'development',
+        version: process.env.APP_VERSION || '1.0.0',
+        requestId: meta.requestId || 'unknown',
+        ...meta
+      });
+    })
   ),
-  transports: [new winston.transports.Console()],
+  transports: [
+    new winston.transports.Console({
+      handleExceptions: true,
+      handleRejections: true
+    })
+  ]
+});
+
+// request ID middleware
+app.use((req, res, next) => {
+  req.requestId = require('crypto').randomUUID();
+  req.startTime = Date.now();
+  logger.info('Incoming request', {
+    requestId: req.requestId,
+    method: req.method,
+    url: req.url,
+    userAgent: req.get('User-Agent'),
+    ip: req.ip
+  });
+  next();
 });
 
 const app = express();
@@ -29,14 +62,23 @@ const startTime = Date.now(); // For uptime calculation
 // Health check endpoint
 app.get('/health', (req, res) => {
   const uptime = Date.now() - startTime;
-  res.status(200).json({
+  const healthCheck = {
     status: 'healthy',
     uptime: uptime,
     timestamp: new Date().toISOString(),
     version: process.env.APP_VERSION || '1.0.0',
-  });
-});
+    environment: process.env.ENVIRONMENT || 'development',
+    requestId: req.requestId
+  };
 
+  logger.info('Health check requested', {
+    requestId: req.requestId,
+    uptime,
+    responseTime: Date.now() - req.startTime
+  });
+
+  res.status(200).json(healthCheck);
+});
 // Main endpoint reading from Parameter Store
 app.get('/', async (req, res) => {
   const startTime = Date.now();
