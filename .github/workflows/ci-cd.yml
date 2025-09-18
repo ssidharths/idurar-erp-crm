@@ -47,7 +47,7 @@ jobs:
     - name: 🧪 Run Unit Tests
       working-directory: ./assignment-part-2/app
       run: |
-        npm test -- --coverage --watchAll=false
+        npm test -- --coverage --watchAll=false --forceExit
         echo "✅ All tests passed"
 
     - name: 📊 Upload Coverage Reports
