@@ -10,7 +10,7 @@ resource "aws_db_subnet_group" "main" {
 
 # RDS Parameter Group
 resource "aws_db_parameter_group" "main" {
-  family = "postgres15"
+  family = "postgres17"
   name   = "${var.project_name}-db-params"
 
   parameter {
@@ -58,7 +58,6 @@ resource "aws_db_instance" "main" {
   kms_key_id            = var.kms_key_arn
 
   engine         = "postgres"
-  engine_version = "15.4"
   instance_class = "db.t3.micro"
 
   db_name  = "appdb"
@@ -97,7 +96,7 @@ resource "aws_elasticache_subnet_group" "main" {
 
 # ElastiCache Parameter Group
 resource "aws_elasticache_parameter_group" "main" {
-  family = "redis7.x"
+  family = "redis6.x"
   name   = "${var.project_name}-cache-params"
 
   parameter {
@@ -130,7 +129,7 @@ resource "aws_elasticache_replication_group" "main" {
   transit_encryption_enabled = true
   kms_key_id                 = var.kms_key_arn
 
-  engine_version = "7.0"
+  engine_version = "6.2"
 
   log_delivery_configuration {
     destination      = aws_cloudwatch_log_group.redis_slow.name

@@ -77,7 +77,7 @@ resource "aws_lambda_function" "pii_filter" {
   function_name    = "${var.project_name}-pii-filter"
   role            = aws_iam_role.pii_filter_lambda_role.arn
   handler         = "index.handler"
-  runtime         = "python3.9"
+  runtime         = "python3.11"
   timeout         = 30
 
   source_code_hash = data.archive_file.pii_filter_zip.output_base64sha256
@@ -452,10 +452,6 @@ resource "aws_cloudwatch_log_metric_filter" "http_5xx_errors" {
     namespace = "DevOpsAssignment/Application"
     value     = "1"
     default_value = "0"
-    
-    dimensions = {
-      Service = "hello-app"
-    }
   }
 }
 
@@ -487,7 +483,7 @@ resource "aws_cloudwatch_metric_alarm" "http_5xx_error_rate" {
 resource "aws_eks_addon" "cloudwatch_observability" {
   cluster_name             = var.eks_cluster_name
   addon_name               = "amazon-cloudwatch-observability"
-  addon_version            = "v1.3.0-eksbuild.1"
+  #addon_version            = "v1.3.0-eksbuild.1"
   resolve_conflicts_on_create = "OVERWRITE"
   resolve_conflicts_on_update = "PRESERVE"  
   tags = {
