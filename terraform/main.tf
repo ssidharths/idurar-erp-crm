@@ -38,6 +38,7 @@ provider "aws" {
 module "security" {
   source       = "./modules/security"
   project_name = var.project_name
+  environment  = var.environment
   vpc_id       = module.networking.vpc_id
 }
 
@@ -56,9 +57,11 @@ module "compute" {
   private_subnet_ids        = module.networking.private_subnet_ids
   public_subnet_ids         = module.networking.public_subnet_ids
   cluster_role_arn          = module.security.eks_cluster_role_arn
-  node_role_arn             = module.security.eks_cluster_role_arn
+  node_role_arn             = module.security.eks_node_role_arn
   cluster_security_group_id = module.security.eks_cluster_security_group_id
   kms_key_arn               = module.security.kms_key_arn
+  nodes_security_group_id   = module.security.eks_nodes_security_group_id
+
 }
 
 module "database" {

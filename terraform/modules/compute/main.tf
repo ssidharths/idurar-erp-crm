@@ -39,8 +39,8 @@ resource "aws_eks_node_group" "general" {
   node_role_arn   = var.node_role_arn
   subnet_ids      = var.private_subnet_ids
   scaling_config {
-    desired_size = 2
-    max_size     = 4
+    desired_size = 1
+    max_size     = 2
     min_size     = 1
   }
 
@@ -50,6 +50,8 @@ resource "aws_eks_node_group" "general" {
 
   instance_types = ["t3.medium"]
   capacity_type  = "ON_DEMAND"
+  ami_type       = "AL2_x86_64"
+  disk_size      = 20
 
   labels = {
     role = "general"
@@ -57,8 +59,10 @@ resource "aws_eks_node_group" "general" {
 
   tags = {
     Name = "${var.project_name}-general-nodes"
+    "kubernetes.io/cluster/${aws_eks_cluster.main.name}" = "owned"
   }
 
+  depends_on = [aws_eks_cluster.main]
 }
 
 # EKS Node Group 2 (Spot Instances for cost optimization)
@@ -69,8 +73,8 @@ resource "aws_eks_node_group" "spot" {
   subnet_ids      = var.private_subnet_ids
 
   scaling_config {
-    desired_size = 1
-    max_size     = 3
+    desired_size = 0
+    max_size     = 1
     min_size     = 0
   }
 
@@ -78,7 +82,7 @@ resource "aws_eks_node_group" "spot" {
     max_unavailable = 1
   }
 
-  instance_types = ["t3.medium", "t3.large"]
+  instance_types = ["t2.micro", "t2.small"]
   capacity_type  = "SPOT"
 
   labels = {

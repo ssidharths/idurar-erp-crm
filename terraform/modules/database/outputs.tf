@@ -48,3 +48,10 @@ output "rds_instance_id" {
   value       = aws_db_instance.main.identifier
 }
 
+output "redis_cluster_id" {
+  description = "ElastiCache Redis cluster identifier"
+  value       = aws_elasticache_replication_group.main.replication_group_id
+}
+
+
+

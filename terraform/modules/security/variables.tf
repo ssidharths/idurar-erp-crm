@@ -19,3 +19,8 @@ variable "slack_webhook_url" {
   type        = string
   default     = ""
 }
+
+variable "environment" {
+  description = "Environment name"
+  type        = string
+}
