@@ -31,8 +31,6 @@ terraform/modules/modules.json
 
 # App
 assignment-part-2/app/node_modules
-assignment-part-2/app/package-lock.json
-
 
 # OS
 .DS_Store
