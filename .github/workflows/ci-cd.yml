@@ -10,7 +10,7 @@ env:
   AWS_REGION: us-east-1
   EKS_CLUSTER_NAME: devops-assignment-cluster
   ECR_REPOSITORY: devops-assignment-app
-  HELM_CHART_PATH: ./helm-charts/hello-app
+  HELM_CHART_PATH: ./assignment-part-2/helm-charts/hello-app 
   TF_VERSION: 1.6.0
   
 jobs:
@@ -33,19 +33,19 @@ jobs:
         cache-dependency-path: app/package-lock.json
 
     - name: 📦 Install Dependencies
-      working-directory: ./app
+      working-directory: ./assignment-part-2/app
       run: |
         npm ci
         echo "✅ Dependencies installed successfully"
 
     - name: 🔍 Run ESLint
-      working-directory: ./app
+      working-directory: ./assignment-part-2/app
       run: |
         npm run lint
         echo "✅ Linting passed"
 
     - name: 🧪 Run Unit Tests
-      working-directory: ./app
+      working-directory: ./assignment-part-2/app
       run: |
         npm test -- --coverage --watchAll=false
         echo "✅ All tests passed"
@@ -54,7 +54,7 @@ jobs:
       uses: codecov/codecov-action@v3
       if: always()
       with:
-        file: ./app/coverage/lcov.info
+        file: ./assignment-part-2/app/coverage/lcov.info
         flags: unittests
         name: codecov-umbrella
 
@@ -218,7 +218,7 @@ jobs:
       uses: aws-actions/amazon-ecr-login@v2
 
     - name: 🏗️ Build Docker Image
-      working-directory: ./app
+      working-directory: ./assignment-part-2/app
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         IMAGE_TAG: ${{ needs.test-and-lint.outputs.app-version }}
