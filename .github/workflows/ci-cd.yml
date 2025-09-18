@@ -136,7 +136,7 @@ jobs:
 
     - name: 🤖 Google Gemini Security Scan
       env:
-        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY}}
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       run: |
         echo "🔍 Running comprehensive security analysis..."
         python assignment-part-2/scripts/gemini-security-scan.py
