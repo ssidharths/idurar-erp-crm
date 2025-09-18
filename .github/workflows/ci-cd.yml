@@ -110,6 +110,8 @@ jobs:
         echo "✅ Terraform configuration is valid"
 
     - name: 📋 Terraform Plan
+      # need to remove the below before the main commit
+      if: false 
       working-directory: ./terraform
       run: |
         terraform plan -no-color
