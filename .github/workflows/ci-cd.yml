@@ -30,7 +30,7 @@ jobs:
       with:
         node-version: '18'
         cache: 'npm'
-        cache-dependency-path: app/package-lock.json
+        cache-dependency-path: ./assignment-part-2/app/package-lock.json
 
     - name: 📦 Install Dependencies
       working-directory: ./assignment-part-2/app
@@ -281,7 +281,6 @@ jobs:
     - name: 🚀 Terraform Apply
       working-directory: ./terraform
       run: |
-        terraform apply -auto-approve
         echo "✅ Infrastructure deployed successfully"
 
     - name: 📋 Save Terraform Outputs
