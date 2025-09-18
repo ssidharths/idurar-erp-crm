@@ -20,6 +20,9 @@ override.tf.json
 terraform/providers/
 terraform/modules/modules.json
 
+# Lambda deployment packages (auto-generated)
+*.zip
+
 # IDE
 .vscode/
 .idea/

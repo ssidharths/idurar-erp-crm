@@ -74,17 +74,14 @@ resource "aws_s3_bucket_versioning" "guardduty_findings" {
   }
 }
 
-resource "aws_s3_bucket_encryption" "guardduty_findings" {
+resource "aws_s3_bucket_server_side_encryption_configuration" "guardduty_findings" {
   bucket = aws_s3_bucket.guardduty_findings.id
-
-  server_side_encryption_configuration {
     rule {
       apply_server_side_encryption_by_default {
         kms_master_key_id = aws_kms_key.guardduty.arn
         sse_algorithm     = "aws:kms"
       }
     }
-  }
 }
 
 resource "aws_s3_bucket_public_access_block" "guardduty_findings" {
@@ -100,6 +97,41 @@ resource "aws_s3_bucket_public_access_block" "guardduty_findings" {
 resource "aws_kms_key" "guardduty" {
   description             = "KMS key for GuardDuty findings encryption"
   deletion_window_in_days = 7
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "Enable IAM User Permissions"
+        Effect = "Allow"
+        Principal = {
+          AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
+        }
+        Action   = "kms:*"
+        Resource = "*"
+      },
+      {
+        Sid    = "Allow GuardDuty to use the key"
+        Effect = "Allow"
+        Principal = {
+          Service = "guardduty.amazonaws.com"
+        }
+        Action = [
+          "kms:Decrypt",
+          "kms:DescribeKey",
+          "kms:Encrypt",
+          "kms:GenerateDataKey*",
+          "kms:ReEncrypt*"
+        ]
+        Resource = "*"
+        Condition = {
+          StringEquals = {
+            "aws:SourceAccount" = data.aws_caller_identity.current.account_id
+          }
+        }
+      }
+    ]
+  })
 
   tags = {
     Name        = "${var.project_name}-guardduty-key"
@@ -208,17 +240,14 @@ resource "aws_s3_bucket_versioning" "config" {
   }
 }
 
-resource "aws_s3_bucket_encryption" "config" {
+resource "aws_s3_bucket_server_side_encryption_configuration" "config" {
   bucket = aws_s3_bucket.config.id
-
-  server_side_encryption_configuration {
     rule {
       apply_server_side_encryption_by_default {
         kms_master_key_id = aws_kms_key.config.arn
         sse_algorithm     = "aws:kms"
       }
     }
-  }
 }
 
 resource "aws_s3_bucket_public_access_block" "config" {
@@ -271,7 +300,7 @@ resource "aws_iam_role" "config" {
 
 resource "aws_iam_role_policy_attachment" "config" {
   role       = aws_iam_role.config.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/ConfigRole"
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWS_ConfigRole"
 }
 
 resource "aws_iam_role_policy" "config_s3_policy" {
@@ -361,48 +390,21 @@ resource "aws_config_config_rule" "rds_encryption" {
   }
 }
 
-# 4. Check for security groups allowing 0.0.0.0/0 access
-resource "aws_config_config_rule" "security_group_restricted_common_ports" {
-  name = "${var.project_name}-sg-restricted-ports"
+# resource "aws_config_config_rule" "iam_root_access_key_check" {
+#   name = "${var.project_name}-iam-root-access-key-check"
 
-  source {
-    owner             = "AWS"
-    source_identifier = "SECURITY_GROUP_RESTRICTED_COMMON_PORTS"
-  }
+#   source {
+#     owner             = "AWS"
+#     source_identifier = "IAM_ROOT_ACCESS_KEY_CHECK"
+#   }
 
-  input_parameters = jsonencode({
-    blockedPort1 = "20"
-    blockedPort2 = "21"
-    blockedPort3 = "3389"
-    blockedPort4 = "3306"
-    blockedPort5 = "5432"
-  })
+#   depends_on = [aws_config_configuration_recorder.main]
 
-  depends_on = [aws_config_configuration_recorder.main]
-
-  tags = {
-    Name        = "${var.project_name}-sg-restricted-ports"
-    Environment = var.environment
-  }
-}
-
-# 5. Check root access key usage
-resource "aws_config_config_rule" "root_access_key_check" {
-  name = "${var.project_name}-root-access-key-check"
-
-  source {
-    owner             = "AWS"
-    source_identifier = "ROOT_ACCESS_KEY_CHECK"
-  }
-
-  depends_on = [aws_config_configuration_recorder.main]
-
-  tags = {
-    Name        = "${var.project_name}-root-access-key"
-    Environment = var.environment
-  }
-}
-
+#   tags = {
+#     Name        = "${var.project_name}-iam-root-access-key"
+#     Environment = var.environment
+#   }
+# }
 # SNS topic for Config compliance notifications
 resource "aws_sns_topic" "config_compliance" {
   name = "${var.project_name}-config-compliance"

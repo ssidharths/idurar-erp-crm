@@ -91,3 +91,31 @@ module "monitoring" {
     module.security
   ]
 }
+
+module "compliance" {
+  source = "./modules/compliance"
+
+  project_name                = var.project_name
+  environment                 = var.environment
+  aws_region                  = var.aws_region
+  finding_publishing_frequency = var.finding_publishing_frequency
+  enable_s3_protection         = var.enable_s3_protection
+  enable_kubernetes_protection = var.enable_kubernetes_protection
+  enable_malware_protection    = var.enable_malware_protection
+  notification_email           = var.notification_email
+}
+
+module "bonus" {
+  source = "./modules/bonus"
+
+  project_name      = var.project_name
+  environment       = var.environment
+  sns_topic_arn     = module.security.sns_topic_arn  # Make sure this SNS topic exists and is passed here
+  slack_webhook_url = var.slack_webhook_url
+  gemini_api_key    = var.gemini_api_key
+  vpc_id            = module.networking.vpc_id
+  private_subnet_ids = module.networking.private_subnet_ids
+}
+
+
+

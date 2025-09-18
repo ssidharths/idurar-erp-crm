@@ -7,7 +7,7 @@ resource "aws_lambda_function" "chatops" {
   runtime         = "python3.9"
   timeout         = 30
 
-  source_code_hash = data.archive_file.chatops_zip.output_base64sha256
+  source_code_hash = "${data.archive_file.chatops_zip.output_base64sha256}-v3"
 
   environment {
     variables = {
@@ -32,7 +32,6 @@ data "archive_file" "chatops_zip" {
 import json
 import boto3
 import os
-import requests
 from datetime import datetime
 import urllib.parse
 
@@ -208,6 +207,9 @@ def ask_gemini(question, infra_info):
     api_key = os.environ.get('GEMINI_API_KEY')
     if not api_key or api_key == 'fallback':
         return generate_fallback_response(question, infra_info)
+
+    import urllib.request
+    import urllib.parse
     
     prompt = f"""
     You are an AWS infrastructure expert providing ChatOps support. 
@@ -227,30 +229,36 @@ def ask_gemini(question, infra_info):
     """
     
     try:
-        response = requests.post(
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent",
-            headers={
-                'Content-Type': 'application/json',
-                'Authorization': f'Bearer {api_key}'
-            },
-            json={
-                'contents': [{
-                    'parts': [{'text': prompt}]
-                }],
-                'generationConfig': {
-                    'temperature': 0.3,
-                    'topK': 40,
-                    'topP': 0.95,
-                    'maxOutputTokens': 1024
+
+        request_data = {
+            'contents': [{
+                'parts': [{'text': prompt}]
+            }],
+            'generationConfig': {
+                'temperature': 0.3,
+                'topK': 40,
+                'topP': 0.95,
+                'maxOutputTokens': 1024
                 }
-            },
-            timeout=15
-        )
+        }
         
-        if response.status_code == 200:
-            result = response.json()
-            if 'candidates' in result and len(result['candidates']) > 0:
-                return result['candidates'][0]['content']['parts'][0]['text']
+        # Convert to JSON
+        data = json.dumps(request_data).encode('utf-8')
+
+        # Create the request
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={api_key}"
+        req = urllib.request.Request(url, data=data)
+        req.add_header('Content-Type', 'application/json')
+
+        # Make the request
+
+        with urllib.request.urlopen(req, timeout=15) as response:
+            if response.status == 200:
+                result_data = response.read().decode('utf-8')
+                result = json.loads(result_data)
+
+                if 'candidates' in result and len(result['candidates']) > 0:
+                    return result['candidates'][0]['content']['parts'][0]['text']
         
         print(f"Gemini API error: {response.status_code} - {response.text}")
         return generate_fallback_response(question, infra_info)
@@ -316,6 +324,9 @@ def post_to_slack(question, response, subject):
         print("No Slack webhook URL configured")
         return
     
+    import urllib.request
+    import urllib.parse
+    
     payload = {
         "text": f"🤖 *ChatOps Response*",
         "attachments": [
@@ -340,11 +351,15 @@ def post_to_slack(question, response, subject):
     }
     
     try:
-        response = requests.post(webhook_url, json=payload, timeout=10)
-        if response.status_code == 200:
-            print("Successfully posted to Slack")
-        else:
-            print(f"Failed to post to Slack: {response.status_code}")
+        data = json.dumps(payload).encode('utf-8')
+        req = urllib.request.Request(webhook_url, data=data)
+        req.add_header('Content-Type', 'application/json')
+
+        with urllib.request.urlopen(req, timeout=10) as response:
+            if response.status == 200:
+                print("Successfully posted to Slack")
+            else:
+                print(f"Failed to post to Slack : {response.status}")
     except Exception as e:
         print(f"Error posting to Slack: {str(e)}")
 
@@ -434,10 +449,18 @@ resource "aws_iam_role_policy" "chatops_lambda_policy" {
           "cloudwatch:GetMetricStatistics"
         ]
         Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "sns:Publish"
+        ]
+        Resource = var.sns_topic_arn
       }
     ]
   })
 }
+
 
 # SNS subscription to trigger ChatOps Lambda
 resource "aws_sns_topic_subscription" "chatops" {
@@ -486,6 +509,7 @@ data "archive_file" "chatops_test_zip" {
     content = <<EOF
 import json
 import boto3
+import os
 
 def handler(event, context):
     """
