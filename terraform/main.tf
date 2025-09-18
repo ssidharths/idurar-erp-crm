@@ -77,12 +77,12 @@ module "database" {
 module "monitoring" {
   source = "./modules/monitoring"
 
-  project_name      = var.project_name
-  environment       = var.environment
-  eks_cluster_name  = module.compute.cluster_name
-  rds_instance_id   = module.database.rds_instance_id
-  redis_cluster_id  = module.database.redis_cluster_id
-  sns_topic_arn     = module.security.sns_topic_arn
+  project_name       = var.project_name
+  environment        = var.environment
+  eks_cluster_name   = module.compute.cluster_name
+  rds_instance_id    = module.database.rds_instance_id
+  redis_cluster_id   = module.database.redis_cluster_id
+  sns_topic_arn      = module.security.sns_topic_arn
   log_retention_days = 30
 
   depends_on = [
@@ -95,9 +95,9 @@ module "monitoring" {
 module "compliance" {
   source = "./modules/compliance"
 
-  project_name                = var.project_name
-  environment                 = var.environment
-  aws_region                  = var.aws_region
+  project_name                 = var.project_name
+  environment                  = var.environment
+  aws_region                   = var.aws_region
   finding_publishing_frequency = var.finding_publishing_frequency
   enable_s3_protection         = var.enable_s3_protection
   enable_kubernetes_protection = var.enable_kubernetes_protection
@@ -108,12 +108,12 @@ module "compliance" {
 module "bonus" {
   source = "./modules/bonus"
 
-  project_name      = var.project_name
-  environment       = var.environment
-  sns_topic_arn     = module.security.sns_topic_arn  # Make sure this SNS topic exists and is passed here
-  slack_webhook_url = var.slack_webhook_url
-  gemini_api_key    = var.gemini_api_key
-  vpc_id            = module.networking.vpc_id
+  project_name       = var.project_name
+  environment        = var.environment
+  sns_topic_arn      = module.security.sns_topic_arn # Make sure this SNS topic exists and is passed here
+  slack_webhook_url  = var.slack_webhook_url
+  gemini_api_key     = var.gemini_api_key
+  vpc_id             = module.networking.vpc_id
   private_subnet_ids = module.networking.private_subnet_ids
 }
 

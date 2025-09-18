@@ -73,12 +73,12 @@ resource "aws_iam_role_policy_attachment" "pii_filter_lambda_basic" {
 
 # Lambda function for PII filtering
 resource "aws_lambda_function" "pii_filter" {
-  filename         = "pii_filter.zip"
-  function_name    = "${var.project_name}-pii-filter"
-  role            = aws_iam_role.pii_filter_lambda_role.arn
-  handler         = "index.handler"
-  runtime         = "python3.11"
-  timeout         = 30
+  filename      = "pii_filter.zip"
+  function_name = "${var.project_name}-pii-filter"
+  role          = aws_iam_role.pii_filter_lambda_role.arn
+  handler       = "index.handler"
+  runtime       = "python3.11"
+  timeout       = 30
 
   source_code_hash = data.archive_file.pii_filter_zip.output_base64sha256
 
@@ -99,7 +99,7 @@ data "archive_file" "pii_filter_zip" {
   type        = "zip"
   output_path = "pii_filter.zip"
   source {
-    content = <<EOF
+    content  = <<EOF
 import json
 import boto3
 import gzip
@@ -211,7 +211,7 @@ resource "aws_cloudwatch_log_group" "filtered_logs" {
 resource "aws_cloudwatch_log_subscription_filter" "pii_filter" {
   name            = "${var.project_name}-pii-filter"
   log_group_name  = aws_cloudwatch_log_group.application_logs.name
-  filter_pattern  = ""  # Process all log events
+  filter_pattern  = "" # Process all log events
   destination_arn = aws_lambda_function.pii_filter.arn
 }
 
@@ -338,10 +338,10 @@ resource "aws_cloudwatch_dashboard" "main" {
         width  = 24
         height = 6
         properties = {
-          query   = "SOURCE '${aws_cloudwatch_log_group.application_logs.name}' | fields @timestamp, @message | filter @message like /ERROR/ | sort @timestamp desc | limit 100"
-          region  = "us-east-1"
-          title   = "Recent Application Errors"
-          view    = "table"
+          query  = "SOURCE '${aws_cloudwatch_log_group.application_logs.name}' | fields @timestamp, @message | filter @message like /ERROR/ | sort @timestamp desc | limit 100"
+          region = "us-east-1"
+          title  = "Recent Application Errors"
+          view   = "table"
         }
       }
     ]
@@ -381,7 +381,7 @@ resource "aws_cloudwatch_metric_alarm" "rds_replica_lag" {
   namespace           = "AWS/RDS"
   period              = "60"
   statistic           = "Average"
-  threshold           = "100"  # 100 milliseconds
+  threshold           = "100" # 100 milliseconds
   alarm_description   = "This metric monitors RDS replica lag"
   alarm_actions       = [var.sns_topic_arn]
 
@@ -426,7 +426,7 @@ resource "aws_cloudwatch_metric_alarm" "high_response_time" {
   namespace           = "DevOpsAssignment/Application"
   period              = "300"
   statistic           = "Average"
-  threshold           = "2000"  # 2 seconds
+  threshold           = "2000" # 2 seconds
   alarm_description   = "This metric monitors application response time"
   alarm_actions       = [var.sns_topic_arn]
   treat_missing_data  = "notBreaching"
@@ -448,9 +448,9 @@ resource "aws_cloudwatch_log_metric_filter" "http_5xx_errors" {
   pattern        = "[timestamp, request_id, level=\"ERROR\", message, status_code=5*]"
 
   metric_transformation {
-    name      = "HTTP5xxErrors"
-    namespace = "DevOpsAssignment/Application"
-    value     = "1"
+    name          = "HTTP5xxErrors"
+    namespace     = "DevOpsAssignment/Application"
+    value         = "1"
     default_value = "0"
   }
 }
@@ -464,7 +464,7 @@ resource "aws_cloudwatch_metric_alarm" "http_5xx_error_rate" {
   namespace           = "DevOpsAssignment/Application"
   period              = "300"
   statistic           = "Sum"
-  threshold           = "5"  # More than 5% error rate
+  threshold           = "5" # More than 5% error rate
   alarm_description   = "This metric monitors HTTP 5xx error rate"
   alarm_actions       = [var.sns_topic_arn]
   treat_missing_data  = "notBreaching"
@@ -481,11 +481,11 @@ resource "aws_cloudwatch_metric_alarm" "http_5xx_error_rate" {
 
 # Enable CloudWatch Container Insights for EKS
 resource "aws_eks_addon" "cloudwatch_observability" {
-  cluster_name             = var.eks_cluster_name
-  addon_name               = "amazon-cloudwatch-observability"
+  cluster_name = var.eks_cluster_name
+  addon_name   = "amazon-cloudwatch-observability"
   #addon_version            = "v1.3.0-eksbuild.1"
   resolve_conflicts_on_create = "OVERWRITE"
-  resolve_conflicts_on_update = "PRESERVE"  
+  resolve_conflicts_on_update = "PRESERVE"
   tags = {
     Name        = "${var.project_name}-cloudwatch-addon"
     Environment = var.environment

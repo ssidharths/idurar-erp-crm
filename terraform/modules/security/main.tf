@@ -339,7 +339,7 @@ resource "aws_security_group" "redis" {
 # SNS Topic for alerts
 resource "aws_sns_topic" "alerts" {
   name = "${var.project_name}-alerts"
-  
+
   tags = {
     Name = "${var.project_name}-alerts"
   }
@@ -357,7 +357,7 @@ resource "aws_sns_topic_policy" "alerts" {
         Principal = {
           Service = "cloudwatch.amazonaws.com"
         }
-        Action = "sns:Publish"
+        Action   = "sns:Publish"
         Resource = aws_sns_topic.alerts.arn
         Condition = {
           StringEquals = {

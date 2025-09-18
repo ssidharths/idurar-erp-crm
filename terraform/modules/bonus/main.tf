@@ -1,11 +1,11 @@
 # ChatOps Lambda Function
 resource "aws_lambda_function" "chatops" {
-  filename         = "chatops.zip"
-  function_name    = "${var.project_name}-chatops"
-  role            = aws_iam_role.chatops_lambda.arn
-  handler         = "index.handler"
-  runtime         = "python3.9"
-  timeout         = 30
+  filename      = "chatops.zip"
+  function_name = "${var.project_name}-chatops"
+  role          = aws_iam_role.chatops_lambda.arn
+  handler       = "index.handler"
+  runtime       = "python3.9"
+  timeout       = 30
 
   source_code_hash = "${data.archive_file.chatops_zip.output_base64sha256}-v3"
 
@@ -28,7 +28,7 @@ data "archive_file" "chatops_zip" {
   type        = "zip"
   output_path = "chatops.zip"
   source {
-    content = <<EOF
+    content  = <<EOF
 import json
 import boto3
 import os
@@ -480,12 +480,12 @@ resource "aws_lambda_permission" "allow_sns_chatops" {
 
 # Test Lambda function for manual ChatOps testing
 resource "aws_lambda_function" "chatops_test" {
-  filename         = "chatops_test.zip"
-  function_name    = "${var.project_name}-chatops-test"
-  role            = aws_iam_role.chatops_lambda.arn
-  handler         = "index.handler"
-  runtime         = "python3.9"
-  timeout         = 10
+  filename      = "chatops_test.zip"
+  function_name = "${var.project_name}-chatops-test"
+  role          = aws_iam_role.chatops_lambda.arn
+  handler       = "index.handler"
+  runtime       = "python3.9"
+  timeout       = 10
 
   source_code_hash = data.archive_file.chatops_test_zip.output_base64sha256
 
@@ -506,7 +506,7 @@ data "archive_file" "chatops_test_zip" {
   type        = "zip"
   output_path = "chatops_test.zip"
   source {
-    content = <<EOF
+    content  = <<EOF
 import json
 import boto3
 import os

@@ -76,12 +76,12 @@ resource "aws_s3_bucket_versioning" "guardduty_findings" {
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "guardduty_findings" {
   bucket = aws_s3_bucket.guardduty_findings.id
-    rule {
-      apply_server_side_encryption_by_default {
-        kms_master_key_id = aws_kms_key.guardduty.arn
-        sse_algorithm     = "aws:kms"
-      }
+  rule {
+    apply_server_side_encryption_by_default {
+      kms_master_key_id = aws_kms_key.guardduty.arn
+      sse_algorithm     = "aws:kms"
     }
+  }
 }
 
 resource "aws_s3_bucket_public_access_block" "guardduty_findings" {
@@ -242,12 +242,12 @@ resource "aws_s3_bucket_versioning" "config" {
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "config" {
   bucket = aws_s3_bucket.config.id
-    rule {
-      apply_server_side_encryption_by_default {
-        kms_master_key_id = aws_kms_key.config.arn
-        sse_algorithm     = "aws:kms"
-      }
+  rule {
+    apply_server_side_encryption_by_default {
+      kms_master_key_id = aws_kms_key.config.arn
+      sse_algorithm     = "aws:kms"
     }
+  }
 }
 
 resource "aws_s3_bucket_public_access_block" "config" {
@@ -455,7 +455,7 @@ resource "aws_cloudwatch_event_rule" "guardduty_findings" {
     source      = ["aws.guardduty"]
     detail-type = ["GuardDuty Finding"]
     detail = {
-      severity = [4.0, 7.0, 8.5, 10.0]  # Medium to Critical severity
+      severity = [4.0, 7.0, 8.5, 10.0] # Medium to Critical severity
     }
   })
 
@@ -473,12 +473,12 @@ resource "aws_cloudwatch_event_target" "guardduty_findings_sns" {
 
 # Lambda function for automated remediation
 resource "aws_lambda_function" "security_remediation" {
-  filename         = "security_remediation.zip"
-  function_name    = "${var.project_name}-security-remediation"
-  role            = aws_iam_role.remediation_lambda.arn
-  handler         = "index.handler"
-  runtime         = "python3.9"
-  timeout         = 60
+  filename      = "security_remediation.zip"
+  function_name = "${var.project_name}-security-remediation"
+  role          = aws_iam_role.remediation_lambda.arn
+  handler       = "index.handler"
+  runtime       = "python3.9"
+  timeout       = 60
 
   source_code_hash = data.archive_file.remediation_zip.output_base64sha256
 
@@ -499,7 +499,7 @@ data "archive_file" "remediation_zip" {
   type        = "zip"
   output_path = "security_remediation.zip"
   source {
-    content = <<EOF
+    content  = <<EOF
 import json
 import boto3
 import os

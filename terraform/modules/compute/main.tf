@@ -58,7 +58,7 @@ resource "aws_eks_node_group" "general" {
   }
 
   tags = {
-    Name = "${var.project_name}-general-nodes"
+    Name                                                 = "${var.project_name}-general-nodes"
     "kubernetes.io/cluster/${aws_eks_cluster.main.name}" = "owned"
   }
 
