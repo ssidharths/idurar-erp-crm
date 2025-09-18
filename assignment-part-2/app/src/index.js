@@ -1,6 +1,7 @@
 const express = require('express');
 const AWS = require('aws-sdk');
 const winston = require('winston');
+const app = express();
 
 // Enhanced logging configuration
 const logger = winston.createLogger({
@@ -46,7 +47,6 @@ app.use((req, res, next) => {
   next();
 });
 
-const app = express();
 const port = process.env.PORT || 3000;
 
 // Configure AWS SDK
