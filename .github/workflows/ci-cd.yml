@@ -136,20 +136,20 @@ jobs:
       run: |
         pip install requests
 
-    - name: 🤖 Google Gemini Security Scan
-      env:
-        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-      run: |
-        echo "🔍 Running comprehensive security analysis..."
-        python assignment-part-2/scripts/gemini-security-scan.py
-
-        # Check if critical issues were found
-        if [ $? -eq 1 ]; then
-          echo "❌ Critical security issues detected!"
-          exit 1
-        else
-          echo "✅ Security scan passed"
-        fi
+        - name: 🤖 Google Gemini Security Scan
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          echo "🔍 Running comprehensive security analysis..."
+          python assignment-part-2/scripts/gemini-security-scan.py
+  
+          # Check if critical issues were found
+          if [ $? -eq 1 ]; then
+            echo "❌ Critical security issues detected!"
+            exit 1
+          else
+            echo "✅ Security scan passed"
+          fi
 
     - name: 📤 Upload Security Report
       uses: actions/upload-artifact@v4

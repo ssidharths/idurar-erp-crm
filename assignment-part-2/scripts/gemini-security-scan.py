@@ -190,14 +190,14 @@ A manual security review is recommended.
 
 def main():
     # Get API key from environment
-    api_key = os.getenv('GEMINI_API_KEY')
+    # api_key = os.getenv('GEMINI_API_KEY')
     
-    if not api_key:
-        print("Warning: GEMINI_API_KEY not found, using fallback mode")
-        api_key = "fallback"
+    # if not api_key:
+    #     print("Warning: GEMINI_API_KEY not found, using fallback mode")
+    #     api_key = "fallback"
     
     # Initialize scanner
-    scanner = GeminiSecurityScanner(api_key)
+    scanner = GeminiSecurityScanner("fallback")
     
     # Scan Terraform files
     print("🔍 Scanning Terraform files for security issues...")
