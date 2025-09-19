@@ -2,7 +2,7 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ master, develop, feature/security ]
+    branches: [ master, develop ]
   pull_request:
     branches: [ master ]
 
@@ -248,7 +248,7 @@ jobs:
     name: 🚀 Deploy Infrastructure
     runs-on: ubuntu-latest
     needs: [terraform-validate, security-scan]
-    if: github.ref == 'refs/heads/feature/security'
+    if: github.ref == 'refs/heads/master'
     environment: 
       name: production
       url: https://aws.amazon.com/console
@@ -296,7 +296,7 @@ jobs:
     name: 🚢 Deploy to EKS
     runs-on: ubuntu-latest
     needs: [build-and-push, terraform-apply]
-    if: github.ref == 'refs/heads/feature/security'
+    if: github.ref == 'refs/heads/master'
     environment:
       name: production
       url: http://hello-app.local

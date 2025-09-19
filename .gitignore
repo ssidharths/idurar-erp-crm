@@ -19,6 +19,7 @@ override.tf.json
 .terraform/providers/
 terraform/providers/
 terraform/modules/modules.json
+.terraform/terraform.tfvars
 
 # Lambda deployment packages (auto-generated)
 *.zip
