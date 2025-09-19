@@ -1,0 +1,3 @@
+aws_region = "Type in your required AWS region here"
+project_name = "Type in the required name of the project"
+environment = "Type in the environment"

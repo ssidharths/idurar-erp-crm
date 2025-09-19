@@ -19,12 +19,19 @@ override.tf.json
 .terraform/providers/
 terraform/providers/
 terraform/modules/modules.json
+.terraform/terraform.tfvars
+
+# Lambda deployment packages (auto-generated)
+*.zip
 
 # IDE
 .vscode/
 .idea/
 *.swp
 *.swo
+
+# App
+assignment-part-2/app/node_modules
 
 # OS
 .DS_Store
