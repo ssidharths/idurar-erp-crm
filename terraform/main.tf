@@ -48,7 +48,7 @@ module "security" {
   project_name = var.project_name
   environment  = var.environment
   vpc_id       = module.networking.vpc_id
-  depends_on = [module.networking]
+  depends_on   = [module.networking]
 
 }
 
@@ -63,7 +63,7 @@ module "compute" {
   cluster_security_group_id = module.security.eks_cluster_security_group_id
   kms_key_arn               = module.security.kms_key_arn
   nodes_security_group_id   = module.security.eks_nodes_security_group_id
-  depends_on = [module.networking, module.security]
+  depends_on                = [module.networking, module.security]
 }
 
 module "database" {
@@ -74,7 +74,7 @@ module "database" {
   rds_security_group_id   = module.security.rds_security_group_id
   redis_security_group_id = module.security.redis_security_group_id
   kms_key_arn             = module.security.kms_key_arn
-  depends_on = [module.networking, module.security]
+  depends_on              = [module.networking, module.security]
 }
 
 module "compliance" {
@@ -88,7 +88,7 @@ module "compliance" {
   enable_kubernetes_protection = var.enable_kubernetes_protection
   enable_malware_protection    = var.enable_malware_protection
   notification_email           = var.notification_email
-  depends_on = [module.networking, module.security, module.compute, module.database]
+  depends_on                   = [module.networking, module.security, module.compute, module.database]
 
 }
 
@@ -122,7 +122,7 @@ module "bonus" {
   gemini_api_key     = var.gemini_api_key
   vpc_id             = module.networking.vpc_id
   private_subnet_ids = module.networking.private_subnet_ids
-  depends_on = [module.networking, module.security, module.compute, module.database, module.compliance]
+  depends_on         = [module.networking, module.security, module.compute, module.database, module.compliance]
 
 }
 
