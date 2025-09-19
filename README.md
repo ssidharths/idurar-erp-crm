@@ -87,18 +87,14 @@ IDURAR is Open "Fair-Code" Source ERP / CRM (Invoice / Inventory / Accounting / 
 
 6.[Coding Guidelines](https://github.com/idurar/idurar-erp-crm/blob/master/CONTRIBUTING.md#coding-guidelines)
 
-7.[Questions](https://github.com/idurar/idurar-erp-crm/blob/master/CONTRIBUTING.md#questions)
+7.[Questions](https://github.com/idurar/idurar-erp-crm/blob/master/CONTRIBUTING.md#questions)   
 
-
-
-
-# 🚀 DevOps Assignment: Complete AWS Infrastructure with AI Integration  
+# 🚀 DevOps Assignment: Complete AWS Infrastructure with AI Integration   
 
 [![CI/CD Pipeline](https://github.com/ssidharths/devops-assignment/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/ssidharths/devops-assignment/actions) 
 [![Security Scan](https://img.shields.io/badge/Security-Gemini%20AI-blue)](https://ai.google.dev/gemini-api) 
 [![Infrastructure](https://img.shields.io/badge/Infrastructure-Terraform-purple)](https://terraform.io) 
-[![Container](https://img.shields.io/badge/Container-Docker%20%2B%20EKS-orange)](https://kubernetes.io)
-
+[![Container](https://img.shields.io/badge/Container-Docker%20%2B%20EKS-orange)](https://kubernetes.io)   
 
 A comprehensive DevOps solution demonstrating enterprise-grade AWS infrastructure with AI-powered security scanning, complete CI/CD automation, and ChatOps integration.   
 
@@ -647,8 +643,12 @@ Dont forget to give a ⭐️ to this project ... Happy coding!
 ## License
 
 IDURAR is Free Open Source Released under the GNU Affero General Public License v3.0.
-#   U p d a t e d   0 9 / 1 9 / 2 0 2 5   0 1 : 0 4 : 3 4  
- #   U p d a t e d   0 9 / 1 9 / 2 0 2 5   0 1 : 0 6 : 4 6  
- #   C I / C D   P i p e l i n e   T e s t   -   0 9 / 1 9 / 2 0 2 5   0 1 : 1 6 : 2 4  
- #   C I / C D   P i p e l i n e   T e s t   -   0 9 / 1 9 / 2 0 2 5   0 1 : 2 3 : 1 3  
+#   U p d a t e d   0 9 / 1 9 / 2 0 2 5   0 1 : 0 4 : 3 4 
+ 
+ #   U p d a t e d   0 9 / 1 9 / 2 0 2 5   0 1 : 0 6 : 4 6 
+ 
+ #   C I / C D   P i p e l i n e   T e s t   -   0 9 / 1 9 / 2 0 2 5   0 1 : 1 6 : 2 4 
+ 
+ #   C I / C D   P i p e l i n e   T e s t   -   0 9 / 1 9 / 2 0 2 5   0 1 : 2 3 : 1 3 
+ 
  

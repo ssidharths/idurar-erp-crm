@@ -20,6 +20,7 @@ override.tf.json
 terraform/providers/
 terraform/modules/modules.json
 .terraform/terraform.tfvars
+terraform/.terraform.tfstate.lock.info
 
 # Lambda deployment packages (auto-generated)
 *.zip
