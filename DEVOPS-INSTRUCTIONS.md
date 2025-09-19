@@ -35,7 +35,10 @@ This project implements a production-ready, highly available infrastructure on A
 - **Comprehensive monitoring** with CloudWatch and custom dashboards
 - **ChatOps integration** for Slack-based infrastructure management   
 
-![Architecture Diagram](architecture-diagram.mmd)   
+![Architecture Diagram](architecture-v1.mmd)  
+
+
+![Diagram](https://ik.imagekit.io/erx2ffzos/DevOps-Assignment/architecture-v1.png?updatedAt=1758273289234)
 
 ## ✨ Features
 
@@ -293,7 +296,7 @@ Access the comprehensive dashboard: [CloudWatch Console](https://console.aws.ama
 
 ## 💰 Cost Optimization
 
-### Current Cost Analysis
+### Current Cost Analysis - Bonus
 
 | Service Category | Monthly Cost | Optimization Opportunity |
 |-----------------|--------------|-------------------------|
@@ -302,6 +305,11 @@ Access the comprehensive dashboard: [CloudWatch Console](https://console.aws.ama
 | ElastiCache | $20 | Right-sizing (-25%) |
 | Data Transfer | $15 | VPC Endpoints (-60%) |
 | **Total** | **$135** | **Potential: $85 (-37%)** |
+
+### Gemini ChatOps - Bonus
+
+![AWS Lambda Function ](https://ik.imagekit.io/erx2ffzos/DevOps-Assignment/screencapture-us-east-1-console-aws-amazon-lambda-home-2025-09-19-00_40_28.png?updatedAt=1758272552931)   
+![Slack UI](https://ik.imagekit.io/erx2ffzos/DevOps-Assignment/screencapture-app-slack-client-T09FWUEUEUV-C09FUEEPYPM-2025-09-19-00_41_12.png?updatedAt=1758272558372)   
 
 
 ### Optimization Recommendations

@@ -1,0 +1,106 @@
+flowchart TB
+ subgraph CICD["CI/CD Pipeline"]
+        GitHubActions["GitHub Actions"]
+        Gemini["Google Gemini Security Scan"]
+        ECR["Amazon ECR"]
+  end
+ subgraph AWSServices["AWS Managed Services"]
+        S3Static[("S3 Static Assets")]
+        S3State[("S3 Terraform State")]
+        CloudWatch["CloudWatch"]
+        SSMParam["SSM Parameter Store"]
+        KMS["AWS KMS"]
+  end
+ subgraph SecurityMonitoring["Security & Monitoring"]
+        GuardDuty["AWS GuardDuty"]
+        ConfigService["AWS Config"]
+        SNS["SNS Alerts"]
+        Dashboard["CloudWatch Dashboard"]
+  end
+ subgraph PublicLayer["Public Layer"]
+        ALB["Application Load Balancer"]
+        PublicSubnet1["Public Subnet AZ-1<br>10.0.1.0/24"]
+        PublicSubnet2["Public Subnet AZ-2<br>10.0.2.0/24"]
+        NAT1["NAT Gateway 1"]
+        NAT2["NAT Gateway 2"]
+  end
+ subgraph EKS["EKS Cluster"]
+        ControlPlane["EKS Control Plane"]
+        NodeGroup1["Node Group 1"]
+        NodeGroup2["Node Group 2"]
+        Istio["Istio Service Mesh"]
+  end
+ subgraph ComputeLayer["EKS Compute Layer"]
+        PrivateSubnet1["Private Subnet AZ-1<br>10.0.3.0/24"]
+        PrivateSubnet2["Private Subnet AZ-2<br>10.0.4.0/24"]
+        EKS
+  end
+ subgraph DataLayer["Database Layer"]
+        DatabaseSubnet1["DB Subnet AZ-1<br>10.0.5.0/24"]
+        DatabaseSubnet2["DB Subnet AZ-2<br>10.0.6.0/24"]
+        RDS[("RDS PostgreSQL Multi-AZ")]
+        ElastiCache["ElastiCache Redis"]
+  end
+ subgraph VPC["AWS VPC (10.0.0.0/16)"]
+        IGW["Internet Gateway"]
+        PublicLayer
+        ComputeLayer
+        DataLayer
+  end
+    Internet(["Internet"]) --> IGW
+    Developer["Developer"] --> GitHub["GitHub Repository"]
+    GitHub --> GitHubActions
+    GitHubActions --> ECR & Gemini
+    IGW --> ALB
+    ALB --> EKS
+    PublicSubnet1 --> NAT1
+    PublicSubnet2 --> NAT2
+    NAT1 --> PrivateSubnet1
+    NAT2 --> PrivateSubnet2
+    PrivateSubnet1 --> NodeGroup1
+    PrivateSubnet2 --> NodeGroup2
+    ControlPlane --> NodeGroup1 & NodeGroup2
+    DatabaseSubnet1 --> RDS
+    DatabaseSubnet2 --> ElastiCache
+    EKS --> RDS & CloudWatch
+    CloudWatch --> Dashboard
+    GuardDuty --> SNS
+    ConfigService --> SNS
+
+     GitHubActions:::external
+     Gemini:::external
+     ECR:::storage
+     S3Static:::storage
+     S3State:::storage
+     KMS:::security
+     GuardDuty:::security
+     ConfigService:::security
+     ALB:::compute
+     PublicSubnet1:::network
+     PublicSubnet2:::network
+     NAT1:::network
+     NAT2:::network
+     ControlPlane:::compute
+     NodeGroup1:::compute
+     NodeGroup2:::compute
+     Istio:::compute
+     PrivateSubnet1:::network
+     PrivateSubnet2:::network
+     EKS:::compute
+     DatabaseSubnet1:::network
+     DatabaseSubnet2:::network
+     RDS:::database
+     ElastiCache:::database
+     IGW:::network
+     Internet:::external
+     Developer:::external
+     GitHub:::external
+    classDef vpc fill:#E3F2FD,stroke:#1976D2,stroke-width:3px
+    classDef compute fill:#FFF3E0,stroke:#F57C00,stroke-width:2px
+    classDef database fill:#F3E5F5,stroke:#7B1FA2,stroke-width:2px
+    classDef storage fill:#E8F5E8,stroke:#388E3C,stroke-width:2px
+    classDef security fill:#FFEBEE,stroke:#D32F2F,stroke-width:2px
+    classDef external fill:#F3E5F5,stroke:#512DA8,stroke-width:2px
+    classDef network fill:#E1F5FE,stroke:#0288D1,stroke-width:2px
+
+
